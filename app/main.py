@@ -24,6 +24,7 @@ class IncidentResponse(IncidentCreate):
 def health_check() -> dict[str, str]:
     return {"status": "ok"}
 
+next_incident_id = 1
 
 @app.post(
     "/incidents",
@@ -31,8 +32,14 @@ def health_check() -> dict[str, str]:
     status_code=201,
 )
 def create_incident(incident: IncidentCreate) -> IncidentResponse:
-    return IncidentResponse(
-        id=1,
+    global next_incident_id
+
+    incident_response = IncidentResponse(
+        id=next_incident_id,
         status="open",
         **incident.model_dump(),
     )
+
+    next_incident_id += 1
+
+    return incident_response

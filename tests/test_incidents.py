@@ -44,3 +44,24 @@ def test_reject_incident_with_short_fields():
     errors = response.json()["detail"]
 
     assert len(errors) == 3
+
+def test_create_multiple_incidents_have_unique_ids():
+    first_payload = {
+        "title": "First incident",
+        "description": "This is the first incident.",
+        "requester": "Virt",
+    }
+
+    second_payload = {
+        "title": "Second incident",
+        "description": "This is the second incident.",
+        "requester": "Virt",
+    }
+
+    first_response = client.post("/incidents", json=first_payload)
+    second_response = client.post("/incidents", json=second_payload)
+
+    first_id = first_response.json()["id"]
+    second_id = second_response.json()["id"]
+
+    assert second_id == first_id + 1
